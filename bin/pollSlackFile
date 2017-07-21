@@ -1,6 +1,5 @@
-#!/usr/bin/env node
+// #!/usr/bin/env node
 
-//C03DPN3QY -- engineering
 var rp = require('request-promise')
 var slack_token = process.env.SLACK_TOKEN;
 var slack_channel = process.argv[2] || 'C03DPN3QY'
@@ -53,6 +52,7 @@ TimeSent.findOne()
 					console.log("resp.messages: ", resp.messages)
 					var messages = resp.messages;
 					newest_last_time_sent = messages[0].ts;
+					console.log("newestLastTimeSent: ", newest_last_time_sent)
 					var texts = [];
 					for (var i = messages.length-1; i >= 0; i--) {
 						if (messages[i].text != '') {
@@ -98,6 +98,9 @@ TimeSent.findOne()
           return Promise.all(promises)
 				})
 				.then(function(doc){
+					if (!newest_last_time_sent) {
+						return;
+					}
           return TimeSent.findOneAndUpdate({}, {$set:{value:newest_last_time_sent}});
 				})
         .then(function(doc) {
