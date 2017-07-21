@@ -81,23 +81,29 @@ TimeSent.findOne()
 						all_questions.push(question_answers)
 					}
 
+          var promises = [];
 					for (var i = 0; i < all_questions.length; i++) {
 						var content = all_questions[i];
 						var question = content[0];
 						var answers = content.slice(1);
 						var answers_objs = []
 
-						var q = new Question({
-							content: question,
-							answers: [answers]
-						}).save()
+            promises.push(new Promise((resolve, reject) => {
+        			new Question({
+        				content: question,
+        				answers: [answers]
+        			}).save()
+        		}))
 					}
-					return TimeSent.findOneAndUpdate({}, {$set:{value:newest_last_time_sent}});
+          return Promise.all(promises)
 				})
 				.then(function(doc){
-					console.log("SUCCESS: ", doc)
-					process.exit();
+          return TimeSent.findOneAndUpdate({}, {$set:{value:newest_last_time_sent}});
 				})
+        .then(function(doc) {
+          console.log("SUCCESS: ", doc)
+					process.exit();
+        })
 				.catch(function(err) {
 					console.log("ERR:", err)
 					process.exit();
