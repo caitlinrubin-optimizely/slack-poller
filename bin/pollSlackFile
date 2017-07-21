@@ -1,4 +1,4 @@
-// #!/usr/bin/env node
+#!/usr/bin/env node
 
 var rp = require('request-promise')
 var slack_token = process.env.SLACK_TOKEN;
